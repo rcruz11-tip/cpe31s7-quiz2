@@ -1,0 +1,29 @@
+---
+- name: Quiz2
+  hosts: target
+  vars:
+    password: AnsibleManaged
+
+  tasks:
+  - name: Change motd in /etc/motd
+    lineinfile:
+      path: '/etc/motd'
+      line: 'Ansible Managed by 1720084'
+      state: present
+
+  - name: Create a user
+    user:
+      name: rcruz11-tip
+      password: "{{ password | password_hash('sha512') }}"
+      state: present
+
+  - name: Make the user a passwordless sudoer user
+    lineinfile:
+      path: /etc/sudoers
+      insertafter: '^includedir /etc/suoders.d'
+      line: 'rcruz11-tip ALL=(ALL) NOPASSWD: ALL'
+
+  - name: Create a group
+    group:
+      name: sysad2
+      state: present
